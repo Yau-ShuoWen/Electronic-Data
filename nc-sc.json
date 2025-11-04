@@ -1,0 +1,30 @@
+{
+  "router": {
+    "dashboard": [
+      "屋里"
+    ],
+    "search": [
+      "望一眼"
+    ]
+  },
+  "hint": {
+    "open_app_welcome": "",
+    "change_to": [
+      "就晓得你会回来学点子什哩"
+    ],
+    "can_not_find": [
+      "倾不到是？换一只词较一下看咯"
+    ],
+    "please_wait": [
+      "等一下子、让我"
+    ]
+  },
+  "": {
+    "change-dialect": "其他箇方言",
+    "history": "将将看过箇",
+    "favorite": "搦渠给起来",
+    "upload":"",
+    "help-and-feedback":"",
+    "setting": ""
+  }
+}
