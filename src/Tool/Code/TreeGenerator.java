@@ -16,7 +16,7 @@ public class TreeGenerator
     {
         String s = "E:\\計算機編程\\學習筆記".replace('\\', '/');
         List<String> excludeDirs=Arrays.asList(".git", "__pycache__", ".idea", "node_modules");
-        generateDirectoryTree(s, "src/Tool/Code/TreeGenerator.txt", excludeDirs, 3);
+        generateDirectoryTree(s, "src/Tool/Code/Output/TreeGenerator.txt", excludeDirs, 3);
     }
 
     public static void generateDirectoryTree(String directoryPath, String outputFile,

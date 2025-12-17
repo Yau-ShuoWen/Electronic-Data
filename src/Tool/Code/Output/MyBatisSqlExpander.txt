@@ -1,0 +1,219 @@
+
+
+-- ===== SELECT : findHanziByScTc =====
+SELECT
+        main.*,
+        CONCAT(
+        '{"sc" : [',
+        COALESCE(GROUP_CONCAT(DISTINCT '"', similar_field.hanzi, '"'), ''),
+        '], "tc": [',
+        COALESCE(GROUP_CONCAT(DISTINCT '"', similar_field.hantz, '"'), ''),
+        ']}'
+        ) AS similar,
+        CONCAT( '[',
+        GROUP_CONCAT(DISTINCT
+        '{"sc": "', pinyin.sc, '", "tc": "', pinyin.tc, '", "content": "', pinyin.pinyin, '"}'
+        ORDER BY pinyin.sort ASC
+        SEPARATOR ',' ), ']'
+        ) AS mul_py,
+        CONCAT( '[',
+        COALESCE(GROUP_CONCAT(DISTINCT '"', mdr.info, '"' SEPARATOR ','), ''),
+        ']' ) AS mdr_info
+        FROM NC.${dialect}_char main
+        LEFT JOIN NC.${dialect}_char_similar similar ON main.id = similar.char_id
+        LEFT JOIN NC.${dialect}_char_similar similar_field ON main.id = similar_field.char_id
+        LEFT JOIN NC.${dialect}_char_pinyin pinyin ON main.id = pinyin.char_id
+        LEFT JOIN NC.${dialect}_char_mdr char_mdr ON main.id = char_mdr.n
+        LEFT JOIN NC.mdr_char mdr ON char_mdr.m = mdr.id
+        WHERE BINARY main.hanzi = ${hanzi}
+        OR BINARY main.hantz = ${hanzi}
+        GROUP BY main.id
+        ORDER BY main.special;
+
+
+-- ===== SELECT : findHanziByVague =====
+SELECT
+        main.*,
+        CONCAT(
+        '{"sc" : [',
+        COALESCE(GROUP_CONCAT(DISTINCT '"', similar_field.hanzi, '"'), ''),
+        '], "tc": [',
+        COALESCE(GROUP_CONCAT(DISTINCT '"', similar_field.hantz, '"'), ''),
+        ']}'
+        ) AS similar,
+        CONCAT( '[',
+        GROUP_CONCAT(DISTINCT
+        '{"sc": "', pinyin.sc, '", "tc": "', pinyin.tc, '", "content": "', pinyin.pinyin, '"}'
+        ORDER BY pinyin.sort ASC
+        SEPARATOR ',' ), ']'
+        ) AS mul_py,
+        CONCAT( '[',
+        COALESCE(GROUP_CONCAT(DISTINCT '"', mdr.info, '"' SEPARATOR ','), ''),
+        ']' ) AS mdr_info
+        FROM NC.${dialect}_char main
+        LEFT JOIN NC.${dialect}_char_similar similar ON main.id = similar.char_id
+        LEFT JOIN NC.${dialect}_char_similar similar_field ON main.id = similar_field.char_id
+        LEFT JOIN NC.${dialect}_char_pinyin pinyin ON main.id = pinyin.char_id
+        LEFT JOIN NC.${dialect}_char_mdr char_mdr ON main.id = char_mdr.n
+        LEFT JOIN NC.mdr_char mdr ON char_mdr.m = mdr.id
+        WHERE BINARY main.hanzi = ${hanzi}
+        OR BINARY main.hantz = ${hanzi}
+        OR BINARY similar.hanzi = ${hanzi}
+        OR BINARY similar.hantz = ${hanzi}
+        GROUP BY main.id
+        ORDER BY main.special;
+
+
+-- ===== SELECT : findHanziByScOrTc =====
+SELECT
+        main.*,
+        CONCAT(
+        '{"sc" : [',
+        COALESCE(GROUP_CONCAT(DISTINCT '"', similar_field.hanzi, '"'), ''),
+        '], "tc": [',
+        COALESCE(GROUP_CONCAT(DISTINCT '"', similar_field.hantz, '"'), ''),
+        ']}'
+        ) AS similar,
+        CONCAT( '[',
+        GROUP_CONCAT(DISTINCT
+        '{"sc": "', pinyin.sc, '", "tc": "', pinyin.tc, '", "content": "', pinyin.pinyin, '"}'
+        ORDER BY pinyin.sort ASC
+        SEPARATOR ',' ), ']'
+        ) AS mul_py,
+        CONCAT( '[',
+        COALESCE(GROUP_CONCAT(DISTINCT '"', mdr.info, '"' SEPARATOR ','), ''),
+        ']' ) AS mdr_info
+        FROM NC.${dialect}_char main
+        LEFT JOIN NC.${dialect}_char_similar similar ON main.id = similar.char_id
+        LEFT JOIN NC.${dialect}_char_similar similar_field ON main.id = similar_field.char_id
+        LEFT JOIN NC.${dialect}_char_pinyin pinyin ON main.id = pinyin.char_id
+        LEFT JOIN NC.${dialect}_char_mdr char_mdr ON main.id = char_mdr.n
+        LEFT JOIN NC.mdr_char mdr ON char_mdr.m = mdr.id
+        WHERE
+        
+                BINARY main.hantz = ${hanzi}
+            
+                BINARY main.hanzi = ${hanzi}
+            
+        GROUP BY main.id
+        ORDER BY main.special;
+
+
+-- ===== SELECT : getAllChar =====
+SELECT
+        main.*,
+        CONCAT(
+        '{"sc" : [',
+        COALESCE(GROUP_CONCAT(DISTINCT '"', similar_field.hanzi, '"'), ''),
+        '], "tc": [',
+        COALESCE(GROUP_CONCAT(DISTINCT '"', similar_field.hantz, '"'), ''),
+        ']}'
+        ) AS similar,
+        CONCAT( '[',
+        GROUP_CONCAT(DISTINCT
+        '{"sc": "', pinyin.sc, '", "tc": "', pinyin.tc, '", "content": "', pinyin.pinyin, '"}'
+        ORDER BY pinyin.sort ASC
+        SEPARATOR ',' ), ']'
+        ) AS mul_py,
+        CONCAT( '[',
+        COALESCE(GROUP_CONCAT(DISTINCT '"', mdr.info, '"' SEPARATOR ','), ''),
+        ']' ) AS mdr_info
+        FROM NC.${dialect}_char main
+        LEFT JOIN NC.${dialect}_char_similar similar ON main.id = similar.char_id
+        LEFT JOIN NC.${dialect}_char_similar similar_field ON main.id = similar_field.char_id
+        LEFT JOIN NC.${dialect}_char_pinyin pinyin ON main.id = pinyin.char_id
+        LEFT JOIN NC.${dialect}_char_mdr char_mdr ON main.id = char_mdr.n
+        LEFT JOIN NC.mdr_char mdr ON char_mdr.m = mdr.id
+        GROUP BY main.id;
+
+
+-- ===== SELECT : findHanziByCharId =====
+SELECT * FROM NC.${dialect}_char
+        WHERE id = ${id}
+        GROUP BY id;
+
+
+-- ===== SELECT : findHanziSimilarByCharId =====
+SELECT * FROM NC.${dialect}_char_similar
+        WHERE char_id = ${id};
+
+
+-- ===== SELECT : findHanziPinyinByCharId =====
+SELECT * FROM NC.${dialect}_char_pinyin
+        WHERE char_id = ${id}
+        ORDER BY sort;
+
+
+-- ===== SELECT : findPreviousId =====
+SELECT * FROM ${dialect}_char
+        WHERE id < ${id}
+        ORDER BY id DESC
+        LIMIT 1;;
+
+
+-- ===== SELECT : findNextId =====
+SELECT * FROM ${dialect}_char
+        WHERE id > ${id}
+        ORDER BY id ASC
+        LIMIT 1;;
+
+
+-- ===== SELECT : findByUniqueKey =====
+SELECT * FROM ${dialect}_char
+        WHERE
+        hanzi = ${ch.hanzi} AND
+        hantz = ${ch.hantz} AND
+        std_py = ${ch.stdPy};
+
+
+-- ===== INSERT : insertChar =====
+INSERT INTO ${dialect}_char
+        (hanzi, hantz, std_py, special, ipa_exp, mean, note, refer)
+        VALUES
+        (${ch.hanzi}, ${ch.hantz}, ${ch.stdPy}, ${ch.special}, ${ch.ipaExp}, ${ch.mean}, ${ch.note}, ${ch.refer});
+
+
+-- ===== INSERT : insertCharSimilar =====
+INSERT into NC.${dialect}_char_similar
+        (char_id, hanzi, hantz)
+        VALUES (${ch.charId}, ${ch.hanzi}, ${ch.hantz});
+
+
+-- ===== INSERT : insertCharPinyin =====
+INSERT INTO NC.${dialect}_char_pinyin
+        (char_id, sc, tc, pinyin, sort)
+        VALUES (${ch.charId}, ${ch.sc}, ${ch.tc}, ${ch.pinyin}, ${ch.sort});
+
+
+-- ===== UPDATE : updateCharById =====
+UPDATE NC.${dialect}_char
+        SET
+        std_py = ${ch.stdPy},
+        special = ${ch.special},
+        ipa_exp = ${ch.ipaExp},
+        mean = ${ch.mean},
+        note = ${ch.note},
+        refer = ${ch.refer}
+        WHERE id = ${ch.id};
+
+
+-- ===== UPDATE : updateCharSimilarById =====
+UPDATE NC.${dialect}_char_similar
+        SET
+        char_id = ${ch.charId}, hanzi = ${ch.hanzi}, hantz = ${ch.hantz}
+        WHERE id = ${ch.id};
+
+
+-- ===== UPDATE : updateCharPinyinById =====
+UPDATE NC.${dialect}_char_pinyin
+        SET
+        char_id = ${ch.charId}, sc = ${ch.sc}, tc = ${ch.tc}, pinyin = ${ch.pinyin}, sort = ${ch.sort}
+        WHERE id = ${ch.id};
+
+
+-- ===== DELETE : deleteCharSimilarById =====
+DELETE FROM NC.${dialect}_char_similar WHERE id = ${id};
+
+
+-- ===== DELETE : deleteCharPinyinById =====
+DELETE FROM NC.${dialect}_char_pinyin WHERE id = ${id};
