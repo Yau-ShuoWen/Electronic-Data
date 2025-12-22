@@ -14,7 +14,7 @@ public class TreeGenerator
 {
     public static void main(String[] args) throws IOException
     {
-        String s = "E:\\計算機編程\\學習筆記".replace('\\', '/');
+        String s = "E:\\ShuoWen\\V0.2\\yuzongweb\\src\\styles".replace('\\', '/');
         List<String> excludeDirs=Arrays.asList(".git", "__pycache__", ".idea", "node_modules");
         generateDirectoryTree(s, "src/Tool/Code/Output/TreeGenerator.txt", excludeDirs, 3);
     }
