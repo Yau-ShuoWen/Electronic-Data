@@ -12,7 +12,6 @@ public class test
 
         System.out.println((Arrays.toString("0123456789".split(""))));
 
-       
     }
 }
 
