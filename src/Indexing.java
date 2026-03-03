@@ -10,9 +10,7 @@ public class Indexing
 {
     private static BigDecimal fromString(String s)
     {
-        if (!s.matches("\\d+" +
-                "" +
-                "")) throw new NumberFormatException("字符串不是纯数字");
+        if (!s.matches("\\d+")) throw new NumberFormatException("字符串不是纯数字");
 
         BigDecimal d = new BigDecimal("0." + s);
         if (d.equals(BigDecimal.ZERO)) throw new IllegalArgumentException("zero");
