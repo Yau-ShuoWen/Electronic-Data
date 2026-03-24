@@ -1,4 +1,4 @@
-package Tool.DataStructure.tuple;
+package Tool.DataStructure.dataStructure.tuple;
 
 import lombok.Data;
 
@@ -7,6 +7,10 @@ public class Pair<T, U>
 {
     private T left;
     private U right;
+
+    public Pair()
+    {
+    }
 
     public Pair(T left, U right)
     {

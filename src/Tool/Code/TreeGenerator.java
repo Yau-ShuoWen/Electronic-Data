@@ -14,8 +14,8 @@ public class TreeGenerator
 {
     public static void main(String[] args) throws IOException
     {
-        String s = "E:\\Android\\Point24\\app".replace('\\', '/');
-        List<String> excludeDirs=Arrays.asList(".git", "__pycache__", ".idea", "node_modules","meinifets");
+        String s = "C:\\Users\\26530\\Desktop\\chrome-export-tabs".replace('\\', '/');
+        List<String> excludeDirs=new ArrayList<>();//Arrays.asList(".git", "__pycache__", ".idea", "node_modules","meinifets");
         generateDirectoryTree(s, "src/Tool/Code/Output/TreeGenerator.txt", excludeDirs, 20);
     }
 

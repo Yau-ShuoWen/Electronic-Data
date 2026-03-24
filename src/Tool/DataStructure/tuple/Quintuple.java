@@ -1,4 +1,4 @@
-package Tool.DataStructure.tuple;
+package Tool.DataStructure.dataStructure.tuple;
 
 import lombok.Data;
 
@@ -10,6 +10,10 @@ public class Quintuple<T, U, V, W, X>
     private V gamma;
     private W delta;
     private X epsilon;
+
+    public Quintuple()
+    {
+    }
 
     public Quintuple(T alpha, U beta, V gamma, W delta, X epsilon)
     {

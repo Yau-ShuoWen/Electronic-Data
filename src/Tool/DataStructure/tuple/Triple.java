@@ -1,4 +1,4 @@
-package Tool.DataStructure.tuple;
+package Tool.DataStructure.dataStructure.tuple;
 
 import lombok.Data;
 
@@ -8,6 +8,10 @@ public class Triple<T, U, V>
     private T left;
     private U middle;
     private V right;
+
+    public Triple()
+    {
+    }
 
     public Triple(T left, U middle, V right)
     {

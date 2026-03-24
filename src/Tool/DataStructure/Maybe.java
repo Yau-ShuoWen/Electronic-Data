@@ -1,0 +1,121 @@
+package Tool.DataStructure.dataStructure;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import Tool.DataStructure.JavaUtilExtend.NullTool;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
+import java.util.Objects;
+import java.util.function.Function;
+
+@EqualsAndHashCode
+public class Maybe<T>
+{
+    @Getter
+    private final boolean empty;
+    @JsonInclude (JsonInclude.Include.NON_NULL)
+    private final T value;
+
+    private Maybe(boolean empty, T value)
+    {
+        this.empty = empty;
+        this.value = value;
+    }
+
+    /**
+     * 明确有参数的构造
+     */
+    public static <T> Maybe<T> exist(T value)
+    {
+        NullTool.checkNotNull(value, "明确有参数的构造不能再包含null了。Can not be null.");
+        return new Maybe<>(false, value);
+    }
+
+    /**
+     * 明确无参数的构造
+     */
+    public static <T> Maybe<T> nothing()
+    {
+        return new Maybe<>(true, null);
+    }
+
+    /**
+     * 不确定是否有内容的构造
+     */
+    public static <T> Maybe<T> uncertain(T value)
+    {
+        return value == null ? nothing() : exist(value);
+    }
+
+    /**
+     * 对于更多情况下反转判断的快速处理
+     */
+    public boolean isValid()
+    {
+        return !isEmpty();
+    }
+
+    /**
+     * 安全的获得值
+     */
+    @JsonIgnore
+    public T getValue()
+    {
+        NullTool.checkNotNull(value, "这个对象没有值，不可以获取。Can not get.");
+        return value;
+    }
+
+    /**
+     * 序列化的时候不使用上面一个，可能会误触异常，但是序列化使用同名参数
+     * <br>编码时候不可以使用这个函数，特意使用{@code @Deprecated}提示
+     */
+    @Deprecated
+    @JsonProperty ("value")
+    public T getValueOrNull()
+    {
+        return value;
+    }
+
+    /**
+     * 如果为null，返回默认值。默认值不能再为null
+     */
+    public T getValueOrDefault(T defaultValue)
+    {
+        NullTool.checkNotNull(defaultValue, "默认值不能为空");
+        return isValid() ? value : defaultValue;
+    }
+
+    /**
+     * 受控的直接返回值，传入自定义的信息
+     */
+    public T getValueDirectly(String caseNull)
+    {
+        NullTool.checkNotNull(value, caseNull);
+        return value;
+    }
+
+    /**
+     * 比较两个是否都有值并且值相等
+     */
+    public static <T> boolean allValidAndEqual(Maybe<T> a, Maybe<T> b)
+    {
+        return a.isValid() && b.isValid() && Objects.equals(a.getValue(), b.getValue());
+    }
+
+    /**
+     * 如果里面有内容，就把这个内容转换成新的
+     */
+    public <U> Maybe<U> handleIfExist(Function<T, U> fun)
+    {
+        return isValid() ? Maybe.exist(fun.apply(value)) : Maybe.nothing();
+    }
+
+    @Override
+    public String toString()
+    {
+        var s = isValid() ? "value=" + value : "empty=" + empty;
+        return "Maybe(" + s + ")";
+    }
+}
