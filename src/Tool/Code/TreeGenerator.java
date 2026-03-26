@@ -23,10 +23,7 @@ public class TreeGenerator
                                              List<String> excludeDirs, Integer maxDepth) throws IOException
     {
         Path rootPath = Paths.get(directoryPath);
-        if (!Files.exists(rootPath))
-        {
-            throw new IllegalArgumentException("目录不存在: " + directoryPath);
-        }
+        if (!Files.exists(rootPath)) throw new IllegalArgumentException("目录不存在: " + directoryPath);
 
         if (excludeDirs == null)
         {
