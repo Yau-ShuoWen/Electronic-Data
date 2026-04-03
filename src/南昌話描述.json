@@ -1,78 +1,45 @@
-[
-  {
-    "left":  {
-      "name-sc": "声母",
-      "name-tc": "聲母",
-      "code":    "initial"
-    },
-    "right": [
-      {
-        "standard": [
-          ["b", "p", "m", "f"], ["d", "t", "-", "l"],
-          ["g", "k", ",ng", "h"], ["j", "q", "n", "x"], ["z", "c", "s", "-"]
-        ],
-        "keyboard": [
-          ["b", "p", "m", "f"], ["d", "t", "-", "l"],
-          ["g", "k", ",ng", "h"], ["j", "q", "n", "x"], ["z", "c", "s", "-"]
-        ]
-      }
-    ]
+{
+  "defaultItem":  {
+    "sc": "待定",
+    "tc": "待定"
   },
-  {
-    "left":  {
-      "name-sc": "韵母",
-      "name-tc": "韻母",
-      "code":    "last"
+  "item": [
+    {
+      "sc": "待定",
+      "tc": "待定"
     },
-    "right": [
-      {
-        "standard": [["a", "o", "e", "ọ"], ["i", "u", "ü ", "-"]],
-        "keyboard": [["a", "o", "e", "oe"], ["i", "u", "yu", "-"]]
-      },
-      {
-        "standard": [["ai", "ẹi", "ui", "-"], ["au", "eu", "ẹu", "iu"]],
-        "keyboard": [["ai", "eei", "ui", "-"], ["au", "eu", "eeu", "iu"]]
-      },
-      {
-        "standard": [
-          ["an", "on", "en", "ẹn"], ["an", "on", "en", "ẹn"], ["in", "un", "ün", "-"],
-          ["ang", "ong", "ung", "-"]
-        ],
-        "keyboard": [
-          ["an", "on", "en", "een"], ["an", "on", "en", "een"], ["in", "un", "yun", "-"],
-          ["ang", "ong", "ung", "-"]
-        ]
-      },
-      {
-        "standard": [["at", "ot", "et", "ẹt"], ["it", "ut", "üt ", "-"], ["ak", "ok", "uk", "-"]],
-        "keyboard": [["at", "ot", "et", "eet"], ["it", "ut", "yut", "-"], ["ak", "ok", "uk", "-"]]
-      }
-    ]
-  },
-  {
-    "left":  {
-      "name-sc": "特殊音节",
-      "name-tc": "特殊音節",
-      "code":    "special"
+    {
+      "sc": "文读",
+      "tc": "文讀"
     },
-    "right": [
-      {
-        "standard": [["zi", "ci", "si", "-"], ["m", "n", "ng", "-"]],
-        "keyboard": [["zii", "cii", "sii", "-"], ["m", "n", "ng", "-"]]
-      }
-    ]
-  },
-  {
-    "left":  {
-      "name-sc": "音调",
-      "name-tc": "音調",
-      "code":    "tone"
+    {
+      "sc": "白读",
+      "tc": "白讀"
     },
-    "right": [
-      {
-        "standard": [["a", "à", "á", "ǎ"], ["ā", "ả", "a̋", "ȁ"]],
-        "keyboard": [["0", "1", "2", "3"], ["4", "5", "6", "7"]]
-      }
-    ]
-  }
-]
+    {
+      "sc": "老派",
+      "tc": "老派"
+    },
+    {
+      "sc": "新派",
+      "tc": "新派"
+    },
+    {
+      "sc": "普化音",
+      "tc": "普化音"
+    },
+    {
+      "sc": "理论读音",
+      "tc": "理論讀音"
+    },
+    {
+      "sc": "连读音",
+      "tc": "連讀音"
+    },
+    {
+      "sc": "语流音变",
+      "tc": "語流音變"
+    }
+  ]
+}
+
