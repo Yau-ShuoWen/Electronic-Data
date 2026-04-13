@@ -70,9 +70,9 @@ public class FileLineCounter
     // 测试示例
     public static void main(String[] args) throws IOException
     {
-        String dirPath = ("E:\\ShuoWen\\V0.2\\YuZong\\src\\main\\java\\com\\shuowen\\yuzong" +
-                "").replace('\\','/');; // 替换为你的目录
-        List<String> regexList = List.of(".*\\.java", ".*\\.xml"); // 匹配.java和.txt文件
+        String dirPath = ("E:\\ShuoWen\\V0.2\\yuzongweb\\src"
+                .replace('\\','/')); // 替换为你的目录
+        List<String> regexList = List.of(".*\\.vue", ".*\\.js", ".*\\.html", ".*\\.css"); // 匹配.java和.txt文件
         long totalLines = countLines(dirPath, regexList);
         System.out.println("总行数: " + totalLines);
     }

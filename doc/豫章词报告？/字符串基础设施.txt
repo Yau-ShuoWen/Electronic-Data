@@ -1,0 +1,65 @@
+方言词典系统收录了大量生僻汉字、异体字及方言用字，其中包含众多位于 Unicode 补充平面（Supplementary Planes） 的字符（如 CJK Unified Ideographs Extension B、C、D、E、F 等区块，代码点范围 U+20000 以上）。这些字符在 Unicode 标准中属于高代码点（high code points），而在 Java 采用的 UTF-16 编码中，无法用单个 16 位 char 表示，必须使用代理对（surrogate pair） 机制：由一个高代理（high surrogate，U+D800–U+DBFF）和一个低代理（low surrogate，U+DC00–U+DFFF）共同组成一个完整的 21 位代码点。
+Java 原生 String 类的绝大多数方法（length()、charAt(int)、substring(int) 等）均以 UTF-16 代码单元（code unit） 为单位，而非以 Unicode 代码点（code point） 为单位。这导致在处理生僻字密集数据时出现以下严重问题：
+
+长度计算错误：String.length() 返回代码单元数量，一个补充平面字符会被计为 2，导致数据库字段长度校验（如 VARCHAR(N)）被误判为超长而失败。
+索引与截取错误：使用 charAt(i) 或普通索引可能把一个代理对拆开，产生孤立的高/低代理字符，造成乱码或后续处理异常。
+序列化与持久化问题：JSON 框架、ORM 工具、数据库驱动默认按代码单元处理，容易在存储或传输时破坏字符完整性。
+比较与排序异常：代理对被拆分后，字符串比较结果不符合 Unicode 语义。
+
+为从根本上消除这些隐蔽 Bug，本项目自行设计并实现了完全基于代码点语义的自定义文本结构：UChar（单个 Unicode 字符）和 UString（Unicode 字符串），并通过 UElement 接口进行统一抽象。该模块已成为整个系统的基础设施，所有词条文本、读音标注、释义、例句等均使用 UString / UChar 进行处理。
+1. UChar 类 —— 单个 Unicode 代码点的安全封装
+UChar 类将单个 Unicode 标量值（scalar value，范围 0x0000 至 0x10FFFF）封装为不可变对象，内部仅存储一个 int codePoint。
+核心设计与实现：
+
+构造方法：
+UChar.of(String s)：使用 s.codePointCount(0, s.length()) 严格校验输入必须且仅为一个代码点，防止误传入多字符或空串；再通过 codePointAt(0) 提取代码点。这是与 Jackson JSON 反序列化（@JsonCreator）对接的主要入口。
+UChar.of(int codePoint)：调用 Character.isValidCodePoint(codePoint) 进行合法性校验，拒绝无效代码点（例如孤立的代理值）。
+
+输出与序列化：toString() 方法使用 Character.toChars(codePoint) 将代码点安全转换回 UTF-16 表示的 String（自动处理代理对），并标注 @JsonValue，确保 JSON 序列化时输出普通可读字符串，同时数据库存储时保持正确长度。
+相等性与比较：重写 equals(Object)、hashCode() 和 compareTo(UChar)，均基于代码点数值，保证在 Set、Map、排序等集合操作中语义正确。同时提供 contentEquals(char) 和 contentEquals(CharSequence) 等重载，增强与其他组件的兼容性。
+
+通过 UChar，系统将“字符”的概念从 Java 的 char 提升到真正的 Unicode 代码点，彻底杜绝了代理对拆分风险。
+2. UString 类 —— 代码点语义的增强字符串
+UString 是本模块的核心类，设计目标是：对外提供以代码点为单位的完整 Unicode 操作接口，对内保留 StringBuilder 的高效存储与修改能力。
+关键技术实现：
+
+内部结构：
+StringBuilder str：实际存储 UTF-16 编码的字符序列。
+int size：维护当前代码点数量，通过 computeSize(String)（即 codePointCount(0, length())）在构造和修改时同步更新，避免每次都重复计算。
+
+索引映射机制（mapIndex(int idx)）：
+这是 UString 最核心的技术点。外部 API 全部使用代码点索引（0 到 size-1），而内部存储使用代码单元索引。因此，所有涉及位置的操作（insert、delete、substring、uCharAt、at 等）都必须先调用 mapIndex 将代码点索引转换为实际的字符索引。算法实现（快慢指针）：Javaprivate int mapIndex(int idx) {
+    if (size == idx) return str.length();  // 允许在末尾插入
+    if (idx < 0 || idx > size) throw new IndexOutOfBoundsException(...);
+    int fast = 0, slow = 0;
+    while (slow < idx && fast < str.length()) {
+        int point = str.codePointAt(fast);
+        fast += Character.charCount(point);  // 1 或 2
+        slow++;
+    }
+    return fast;
+}该算法线性扫描字符串，每次跳过一个完整代码点（使用 Character.charCount 正确处理代理对）。虽然时间复杂度为 O(n)，但在词典系统中单条记录长度通常较短（几十到几百字符），实际开销可接受。若未来出现极长文本，可考虑引入缓存或跳表优化。
+修改操作（append、insert、delete）：
+先通过 mapIndex 定位，再调用 StringBuilder 对应方法，最后更新 size（size += computeSize(s) 或 size += 1）。确保外部语义与内部存储始终一致。
+查询操作：
+uCharAt(int idx) / at(int idx)：先映射索引，再用 codePointAt + Character.toChars 构造 UChar 或 String，保证返回完整字符。
+substring(int start, int end)：映射起止索引后截取，再构造新的 UString。
+
+比较与相等性：
+compareTo(UString) 和 equals(Object) 均逐代码点比较（通过 at(i)），避免代理对导致的错误。
+contentEquals 系列方法支持与原生 char、CharSequence、UChar、UString 的跨类型安全比较，提高了与现有框架的兼容性。
+迭代支持：
+实现 Iterable<UChar>，并额外提供 chars()（返回 Iterable<String>）和 toCharsList()，方便在业务代码中以“一个字符一个元素”的方式遍历。
+JSON 集成：
+@JsonCreator 和 @JsonValue 确保与 Jackson 无缝对接：反序列化时自动构造 UString，序列化时输出普通字符串。
+
+3. UElement 接口
+UElement<T extends UElement<T>> 接口对 UChar 和 UString 进行抽象，定义了 length()、contentEquals 系列方法以及 toUString() 等核心行为。使得高层代码可以统一处理单字符和字符串场景，提升了 API 的一致性和可扩展性。
+设计权衡与必要性
+虽然 Java 8+ 提供了 codePoints()、codePointAt() 等 API，但原生 String 的接口仍以代码单元为主，现有第三方工具（JSON 库、数据库连接池、校验框架等）难以完全规避风险。自行实现 UChar/UString 虽然引入了少量额外代码和线性索引映射开销，但换来了：
+
+鲁棒性：彻底解决生僻字导致的数据库校验、长度限制、序列化异常等问题；
+一致性：全系统统一使用代码点语义，避免分散处理带来的维护隐患；
+可维护性：封装后，上层业务代码无需关心代理对细节，显著降低了 Bug 引入概率。
+
+在方言词典这类对字符完整性要求极高的应用场景中，这种“自造轮子”的做法是工程上的必要选择，与许多处理东亚生僻字、政府姓名系统、历史文献数字化项目的实践一致。
