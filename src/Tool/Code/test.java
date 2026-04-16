@@ -12,9 +12,8 @@ public class test
     public static void main(String[] args)
     {
         List<Object> list = new ArrayList<>();
-        list.add(1);
         list.add(list);
-        System.out.println(list);
+        System.out.println(list.equals(List.of()));
     }
 }
 
