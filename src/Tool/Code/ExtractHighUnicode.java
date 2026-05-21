@@ -9,21 +9,24 @@ public class ExtractHighUnicode
 {
     public static void main(String[] args)
     {
-        String filePath = "E:\\NCbackup.sql".replace('\\','/');
+        String filePath = "E:\\NCbackup.sql".replace('\\', '/');
 
         try
         {
             String content = new String(Files.readAllBytes(Paths.get(filePath)), "UTF-8");
 
-            // ✅ 1. 移除 mdr_char 的 INSERT 區塊
             content = content.replaceAll(
                     "INSERT INTO `mdr_char`[\\s\\S]*?UNLOCK TABLES;",
                     ""
             );
 
+            content = content.replaceAll(
+                    "INSERT INTO `vin_char`[\\s\\S]*?UNLOCK TABLES;",
+                    ""
+            );
+
             HashSet<String> result = new HashSet<>();
 
-            // ✅ 2. 正常掃描 Unicode
             content.codePoints().forEach(cp ->
             {
                 if (cp > 0x10000)
@@ -40,6 +43,8 @@ public class ExtractHighUnicode
             }
 
             System.out.println("總數: " + result.size());
+
+            System.out.println("可複製:" + String.join("", result));
 
         } catch (IOException e)
         {
