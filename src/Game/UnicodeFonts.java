@@ -14,7 +14,7 @@ public class UnicodeFonts
     {
         List<Boolean> options = List.of(false, true);
         String[] describe = List.of("无", "是").toArray(new String[0]);
-        List<Function<String, String>> change = List.of(s -> s, String::toLowerCase, String::toUpperCase);
+        List<Function<String, String>> change = List.of(s -> s/*, String::toLowerCase, String::toUpperCase*/);
 
         Scanner sc = new Scanner(System.in);
         while (true)
