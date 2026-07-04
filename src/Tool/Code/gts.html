@@ -1,0 +1,1306 @@
+<html>
+<head><title>GTS Converter 3.05</title>
+</head>
+<body bgcolor="#dbdbdb">
+<br>
+<script language="javascript">
+
+    function convert(form, wmnfeet, wmninches, cup, shoe, key1, key2, key3, wmnweight, gtsmiles, gtsfeet, gtsinches, gtslift) {
+
+        <!-- BASIC AND RAW FACTORS -->
+
+        factor = ((gtsmiles * 63360) + (gtsfeet * 12) + (gtsinches * 1)) / ((wmnfeet * 12) + (wmninches * 1))
+        factor68 = (wmnfeet * 12 + wmninches * 1) / (68)
+        factor120 = wmnweight / 120
+        wmnheightinch = (wmninches * 1 + wmnfeet * 12)
+        heightinch = (gtsmiles * 63360 + gtsfeet * 12 + gtsinches * 1)
+        cupcomp = (((cup * 1 + 1) / cup) - 0.1)
+        shoecomp = (((shoe * shoe / 8) - 8) / 250)
+        breast = (cup * 1)
+        headh = ((wmnfeet * 12 + wmninches * 1) / 7)
+        headw = ((wmnfeet * 12 + wmninches * 1) / 7 * (2 / 3))
+
+        <!-- 英制 MEASUREMENTS -->
+
+        form.gtsmi.value = findmi(heightinch)
+        form.gtsft.value = findft(heightinch)
+        form.gtsin.value = findin(heightinch)
+
+        form.gtstons.value = addCommas(findtons(factor120 * 120 * Math.pow(factor, 3)))
+        form.gtspounds.value = findpounds(factor120 * 120 * Math.pow(factor, 3))
+        form.gtslifttons.value = addCommas(findtons(gtslift * Math.pow(factor, 3)))
+        form.gtsliftpounds.value = findpounds(gtslift * Math.pow(factor, 3))
+
+        form.shoulderwmi.value = findmi(headw * 2.9 * factor)
+        form.shoulderwft.value = findft(headw * 2.9 * factor)
+        form.shoulderwin.value = findin(headw * 2.9 * factor)
+        form.hipwmi.value = findmi(headw * (2 + (key3 / 32 - 1) * 1.5) * factor)
+        form.hipwft.value = findft(headw * (2 + (key3 / 32 - 1) * 1.5) * factor)
+        form.hipwin.value = findin(headw * (2 + (key3 / 32 - 1) * 1.5) * factor)
+
+        form.manfeet.value = findft(72 / factor)
+        form.maninches.value = find2din(72 / factor)
+        form.manpounds.value = Math.floor(180 / Math.pow(factor, 3))
+        form.manounces.value = Math.floor((16 * 180 / Math.pow(factor, 3) % 16) * 100.0) / 100.0
+
+        form.bustmi.value = findmi(key1 * Math.pow(factor, 1))
+        form.bustft.value = findft(key1 * Math.pow(factor, 1))
+        form.bustin.value = findin(key1 * Math.pow(factor, 1))
+        form.waistmi.value = findmi(key2 * Math.pow(factor, 1))
+        form.waistft.value = findft(key2 * Math.pow(factor, 1))
+        form.waistin.value = findin(key2 * Math.pow(factor, 1))
+        form.hipsmi.value = findmi(key3 * Math.pow(factor, 1))
+        form.hipsft.value = findft(key3 * Math.pow(factor, 1))
+        form.hipsin.value = findin(key3 * Math.pow(factor, 1))
+
+        form.anklemi.value = findmi(headh / 3 * factor)
+        form.ankleft.value = findft(headh / 3 * factor)
+        form.anklein.value = find1din(headh / 3 * factor)
+        form.kneemi.value = findmi(headh * 1.875 * factor)
+        form.kneeft.value = findft(headh * 1.875 * factor)
+        form.kneein.value = find1din(headh * 1.875 * factor)
+        form.crotchmi.value = findmi(headh * 3.5 * factor)
+        form.crotchft.value = findft(headh * 3.5 * factor)
+        form.crotchin.value = find1din(headh * 3.5 * factor)
+        form.hipmi.value = findmi(headh * 4 * factor)
+        form.hipft.value = findft(headh * 4 * factor)
+        form.hipin.value = find1din(headh * 4 * factor)
+        form.breastmi.value = findmi(((headh * 5) - (((breast + cupcomp * 1.5) - 3.65)) * 0.8) * factor)
+        form.breastft.value = findft(((headh * 5) - (((breast + cupcomp * 1.5) - 3.65)) * 0.8) * factor)
+        form.breastin.value = find1din(((headh * 5) - (((breast + cupcomp * 1.5) - 3.65)) * 0.8) * factor)
+        form.neckmi.value = findmi(headh * 5.75 * factor)
+        form.neckft.value = findft(headh * 5.75 * factor)
+        form.neckin.value = find1din(headh * 5.75 * factor)
+        form.chinmi.value = findmi(headh * 6 * factor)
+        form.chinft.value = findft(headh * 6 * factor)
+        form.chinin.value = find1din(headh * 6 * factor)
+
+        form.walkspeedmph.value = Math.floor((factor68 * 26.5 * factor * 7200 / 63360) * 10.0) / 10.0
+        form.runspeedmph.value = Math.floor((factor68 * 66 * factor * 9600 / 63360) * 10.0) / 10.0
+        form.walkstridemi.value = findmi(factor68 * 26.5 * factor)
+        form.walkstrideft.value = findft(factor68 * 26.5 * factor)
+        form.walkstridein.value = findin(factor68 * 26.5 * factor)
+        form.runstridemi.value = findmi(factor68 * 66 * factor)
+        form.runstrideft.value = findft(factor68 * 66 * factor)
+        form.runstridein.value = findin(factor68 * 66 * factor)
+
+        form.hairmi.value = findmi(0.002 * factor)
+        form.hairft.value = findft(0.002 * factor)
+        form.hairin.value = find2din(0.002 * factor)
+        form.mouthopenmi.value = findmi(factor68 * 2.2 * factor)
+        form.mouthopenft.value = findft(factor68 * 2.2 * factor)
+        form.mouthopenin.value = find1din(factor68 * 2.2 * factor)
+        form.lipsmi.value = findmi(factor68 * 2.6 * factor)
+        form.lipsft.value = findft(factor68 * 2.6 * factor)
+        form.lipsin.value = find1din(factor68 * 2.6 * factor)
+        form.tonguemi.value = findmi(factor68 * 3.9 * factor)
+        form.tongueft.value = findft(factor68 * 3.9 * factor)
+        form.tonguein.value = find1din(factor68 * 3.9 * factor)
+        form.tonguestickmi.value = findmi(factor68 * 1.5 * factor)
+        form.tonguestickft.value = findft(factor68 * 1.5 * factor)
+        form.tonguestickin.value = find1din(factor68 * 1.5 * factor)
+
+        form.breastheightmi.value = findmi((breast + cupcomp) * 1.35 * factor)
+        form.breastheightft.value = findft((breast + cupcomp) * 1.35 * factor)
+        form.breastheightin.value = find1din((breast + cupcomp) * 1.35 * factor)
+        form.breastwidthmi.value = findmi((breast + cupcomp) * 1.15 * factor)
+        form.breastwidthft.value = findft((breast + cupcomp) * 1.15 * factor)
+        form.breastwidthin.value = find1din((breast + cupcomp) * 1.15 * factor)
+        form.breastdepthmi.value = findmi(breast * factor)
+        form.breastdepthft.value = findft(breast * factor)
+        form.breastdepthin.value = find1din(breast * factor)
+
+        form.breasttons.value = addCommas(findtons(cup * Math.pow(factor, 3)))
+        form.breastpounds.value = find2dlbs(cup * Math.pow(factor, 3))
+
+        form.areoladiametermi.value = findmi(((breast + cupcomp * 1.337) * factor) * cupcomp / 4.1)
+        form.areoladiameterft.value = findft(((breast + cupcomp * 1.337) * factor) * cupcomp / 4.1)
+        form.areoladiameterin.value = find2din(((breast + cupcomp * 1.337) * factor) * cupcomp / 4.1)
+        form.nipplediametermi.value = findmi(((breast + cupcomp * 1.337) * factor) * cupcomp / 14.8)
+        form.nipplediameterft.value = findft(((breast + cupcomp * 1.337) * factor) * cupcomp / 14.8)
+        form.nipplediameterin.value = find2din(((breast + cupcomp * 1.337) * factor) * cupcomp / 14.8)
+        form.nippleerrectmi.value = findmi(((breast + cupcomp * 1.337) * factor) * cupcomp / 8.2)
+        form.nippleerrectft.value = findft(((breast + cupcomp * 1.337) * factor) * cupcomp / 8.2)
+        form.nippleerrectin.value = find2din(((breast + cupcomp * 1.337) * factor) * cupcomp / 8.2)
+        form.milkductmi.value = findmi(factor * (0.019 + breast / 2000))
+        form.milkductft.value = findft(factor * (0.019 + breast / 2000))
+        form.milkductin.value = find2din(factor * (0.019 + breast / 2000))
+        form.milkdropga.value = addCommas(Math.floor((((4 / 3 * 3.14 * Math.pow((((breast + cupcomp * 1.337) * factor) * cupcomp / 355.2), 3)) * 3)) * 100.0) / 100.0)
+        form.milkdroptons.value = addCommas(Math.floor((((4 / 3 * 3.14 * Math.pow((((breast + cupcomp * 1.337) * factor) * cupcomp / 355.2), 3)) * 3)) / 250))
+        form.milkdroppounds.value = Math.floor(((((4 / 3 * 3.14 * Math.pow((((breast + cupcomp * 1.337) * factor) * cupcomp / 355.2), 3)) * 3)) * 8.32 % 2000) * 100.0) / 100.0
+
+        form.vaginami.value = findmi(factor68 * 6 * factor)
+        form.vaginaft.value = findft(factor68 * 6 * factor)
+        form.vaginain.value = findin(factor68 * 6 * factor)
+        form.labiami.value = findmi(factor68 * 1.75 * factor)
+        form.labiaft.value = findft(factor68 * 1.75 * factor)
+        form.labiain.value = findin(factor68 * 1.75 * factor)
+
+        form.palmmi.value = findmi(wmnheightinch / 9.2 * 0.525 * factor)
+        form.palmft.value = findft(wmnheightinch / 9.2 * 0.525 * factor)
+        form.palmin.value = findin(wmnheightinch / 9.2 * 0.525 * factor)
+        form.fingermi.value = findmi(wmnheightinch / 9.2 * 0.475 * factor)
+        form.fingerft.value = findft(wmnheightinch / 9.2 * 0.475 * factor)
+        form.fingerin.value = findin(wmnheightinch / 9.2 * 0.475 * factor)
+        form.ringmi.value = findmi(factor68 * 0.68 * factor)
+        form.ringft.value = findft(factor68 * 0.68 * factor)
+        form.ringin.value = findin(factor68 * 0.68 * factor)
+        form.armlmi.value = findmi(factor68 * 22 * factor)
+        form.armlft.value = findft(factor68 * 22 * factor)
+        form.armlin.value = findin(factor68 * 22 * factor)
+
+        form.crotchmi2.value = findmi(headh * 3.5 * factor)
+        form.crotchft2.value = findft(headh * 3.5 * factor)
+        form.crotchin2.value = findin(headh * 3.5 * factor)
+        form.footwmi.value = findmi(shoe * (0.334 + shoecomp) * factor)
+        form.footwft.value = findft(shoe * (0.334 + shoecomp) * factor)
+        form.footwin.value = find2din(shoe * (0.334 + shoecomp) * factor)
+        form.footlmi.value = findmi(shoe * factor)
+        form.footlft.value = findft(shoe * factor)
+        form.footlin.value = find2din(shoe * factor)
+
+        <!-- FORCE MEASUREMENTS -->
+
+        form.gtsstep.value = addCommas(Math.floor((factor120 * 120 * Math.pow(factor, 3) * 0.4536) / 2 * (9.81) * (0.07 * factor)))
+        form.gtsstomp.value = addCommas(Math.floor((factor120 * 120 * Math.pow(factor, 3) * 0.4536) / 2 * (11.5) * (0.5 * factor)))
+        form.gtsjump.value = addCommas(Math.floor((factor120 * 120 * Math.pow(factor, 3) * 0.4536) * (9.81) * (0.43 * factor)))
+
+        <!-- 公制 MEASUREMENTS -->
+
+        console.log(findkm(heightinch))
+        console.log(findm(heightinch))
+        console.log(findcm(heightinch))
+
+        form.gtskm.value = findkm(heightinch)
+        form.gtsm.value = findm(heightinch)
+        form.gtscm.value = findcm(heightinch)
+
+        form.shoulderwkm.value = findkm(headw * 2.9 * factor)
+        form.shoulderwm.value = findm(headw * 2.9 * factor)
+        form.shoulderwcm.value = findcm(headw * 2.9 * factor)
+        form.hipwkm.value = findkm(headw * (2 + (key3 / 32 - 1) * 1.5) * factor)
+        form.hipwm.value = findm(headw * (2 + (key3 / 32 - 1) * 1.5) * factor)
+        form.hipwcm.value = findcm(headw * (2 + (key3 / 32 - 1) * 1.5) * factor)
+
+        form.manm.value = findm(72 / factor)
+        form.mancm.value = find2dcm(72 / factor)
+        form.mankg.value = Math.floor(81.65 / Math.pow(factor, 3))
+        form.mang.value = Math.floor((8165 / Math.pow(factor, 3) % 1000) * 100.0) / 100.0
+
+        form.gtsmtons.value = addCommas(findmtons(factor120 * 120 * Math.pow(factor, 3)))
+        form.gtskgs.value = findkgs(factor120 * 120 * Math.pow(factor, 3))
+        form.gtsliftmtons.value = addCommas(findmtons(gtslift * Math.pow(factor, 3)))
+        form.gtsliftkgs.value = findkgs(gtslift * Math.pow(factor, 3))
+
+        form.bustkm.value = findkm(key1 * Math.pow(factor, 1))
+        form.bustm.value = findm(key1 * Math.pow(factor, 1))
+        form.bustcm.value = findcm(key1 * Math.pow(factor, 1))
+        form.waistkm.value = findkm(key2 * Math.pow(factor, 1))
+        form.waistm.value = findm(key2 * Math.pow(factor, 1))
+        form.waistcm.value = findcm(key2 * Math.pow(factor, 1))
+        form.hipskm.value = findkm(key3 * Math.pow(factor, 1))
+        form.hipsm.value = findm(key3 * Math.pow(factor, 1))
+        form.hipscm.value = findcm(key3 * Math.pow(factor, 1))
+
+        form.anklekm.value = findkm(headh / 3 * factor)
+        form.anklem.value = findm(headh / 3 * factor)
+        form.anklecm.value = find1dcm(headh / 3 * factor)
+        form.kneekm.value = findkm(headh * 1.875 * factor)
+        form.kneem.value = findm(headh * 1.875 * factor)
+        form.kneecm.value = find1dcm(headh * 1.875 * factor)
+        form.crotchkm.value = findkm(headh * 3.5 * factor)
+        form.crotchm.value = findm(headh * 3.5 * factor)
+        form.crotchcm.value = find1dcm(headh * 3.5 * factor)
+        form.hipkm.value = findkm(headh * 4 * factor)
+        form.hipm.value = findm(headh * 4 * factor)
+        form.hipcm.value = find1dcm(headh * 4 * factor)
+        form.breastkm.value = findkm(((headh * 5) - (((breast + cupcomp * 1.5) - 3.65)) * 0.8) * factor)
+        form.breastm.value = findm(((headh * 5) - (((breast + cupcomp * 1.5) - 3.65)) * 0.8) * factor)
+        form.breastcm.value = find1dcm(((headh * 5) - (((breast + cupcomp * 1.5) - 3.65)) * 0.8) * factor)
+        form.neckkm.value = findkm(headh * 5.75 * factor)
+        form.neckm.value = findm(headh * 5.75 * factor)
+        form.neckcm.value = find1dcm(headh * 5.75 * factor)
+        form.chinkm.value = findkm(headh * 6 * factor)
+        form.chinm.value = findm(headh * 6 * factor)
+        form.chincm.value = find1dcm(headh * 6 * factor)
+
+        form.walkspeedkph.value = Math.floor((factor68 * 61.31 * factor * 7200 / 100000) * 10.0) / 10.0
+        form.runspeedkph.value = Math.floor((factor68 * 167.64 * factor * 9600 / 100000) * 10.0) / 10.0
+        form.walkstridekm.value = findkm(factor68 * 26.5 * factor)
+        form.walkstridem.value = findm(factor68 * 26.5 * factor)
+        form.walkstridecm.value = findcm(factor68 * 26.5 * factor)
+        form.runstridekm.value = findkm(factor68 * 66 * factor)
+        form.runstridem.value = findm(factor68 * 66 * factor)
+        form.runstridecm.value = findcm(factor68 * 66 * factor)
+
+        form.hairkm.value = findkm(0.002 * factor)
+        form.hairm.value = findm(0.002 * factor)
+        form.haircm.value = find2dcm(0.002 * factor)
+        form.mouthopenkm.value = findkm(factor68 * 2.2 * factor)
+        form.mouthopenm.value = findm(factor68 * 2.2 * factor)
+        form.mouthopencm.value = find1dcm(factor68 * 2.2 * factor)
+        form.lipskm.value = findkm(factor68 * 2.6 * factor)
+        form.lipsm.value = findm(factor68 * 2.6 * factor)
+        form.lipscm.value = find1dcm(factor68 * 2.6 * factor)
+        form.tonguekm.value = findkm(factor68 * 3.9 * factor)
+        form.tonguem.value = findm(factor68 * 3.9 * factor)
+        form.tonguecm.value = find1dcm(factor68 * 3.9 * factor)
+        form.tongueoutkm.value = findkm(factor68 * 1.5 * factor)
+        form.tongueoutm.value = findm(factor68 * 1.5 * factor)
+        form.tongueoutcm.value = find1dcm(factor68 * 1.5 * factor)
+
+        form.breastheightkm.value = findkm((breast + cupcomp) * 1.5 * factor)
+        form.breastheightm.value = findm((breast + cupcomp) * 1.5 * factor)
+        form.breastheightcm.value = find1dcm((breast + cupcomp) * 1.5 * factor)
+        form.breastwidthkm.value = findkm((breast + cupcomp) * 1.337 * factor)
+        form.breastwidthm.value = findm((breast + cupcomp) * 1.337 * factor)
+        form.breastwidthcm.value = find1dcm((breast + cupcomp) * 1.337 * factor)
+        form.breastdepthkm.value = findkm(cup * factor)
+        form.breastdepthm.value = findm(cup * factor)
+        form.breastdepthcm.value = find1dcm(cup * factor)
+
+        form.breastmtons.value = addCommas(findmtons(cup * Math.pow(factor, 3)))
+        form.breastkgs.value = find2dkgs(cup * Math.pow(factor, 3))
+
+        form.areoladiameterkm.value = findkm(((breast + cupcomp * 1.337) * factor) * cupcomp / 4.1)
+        form.areoladiameterm.value = findm(((breast + cupcomp * 1.337) * factor) * cupcomp / 4.1)
+        form.areoladiametercm.value = find2dcm(((breast + cupcomp * 1.337) * factor) * cupcomp / 4.1)
+        form.nipplediameterkm.value = findkm(((breast + cupcomp * 1.337) * factor) * cupcomp / 14.8)
+        form.nipplediameterm.value = findm(((breast + cupcomp * 1.337) * factor) * cupcomp / 14.8)
+        form.nipplediametercm.value = find2dcm(((breast + cupcomp * 1.337) * factor) * cupcomp / 14.8)
+        form.nippleerrectkm.value = findkm(((breast + cupcomp * 1.337) * factor) * cupcomp / 8.2)
+        form.nippleerrectm.value = findm(((breast + cupcomp * 1.337) * factor) * cupcomp / 8.2)
+        form.nippleerrectcm.value = find2dcm(((breast + cupcomp * 1.337) * factor) * cupcomp / 8.2)
+        form.milkductkm.value = findkm(factor * (0.019 + breast / 2000))
+        form.milkductm.value = findm(factor * (0.019 + breast / 2000))
+        form.milkductcm.value = find2dcm(factor * (0.019 + breast / 2000))
+        form.milkdropli.value = addCommas(Math.floor((((4 / 3 * 3.14 * Math.pow((((breast + cupcomp * 1.337) * factor) * cupcomp / 355.2), 3)) * 3 * 3.785)) * 100.0) / 100.0)
+        form.milkdropmtons.value = addCommas(Math.floor((((4 / 3 * 3.14 * Math.pow((((breast + cupcomp * 1.337) * factor) * cupcomp / 355.2), 3)) * 3)) / 250 * 0.907))
+        form.milkdropkgs.value = Math.floor(((((4 / 3 * 3.14 * Math.pow((((breast + cupcomp * 1.337) * factor) * cupcomp / 355.2), 3)) * 3)) * 3.774 % 1000) * 100.0) / 100.0
+
+        form.vaginakm.value = findkm(factor68 * 6 * factor)
+        form.vaginam.value = findm(factor68 * 6 * factor)
+        form.vaginacm.value = findcm(factor68 * 6 * factor)
+        form.labiakm.value = findkm(factor68 * 1.75 * factor)
+        form.labiam.value = findm(factor68 * 1.75 * factor)
+        form.labiacm.value = findcm(factor68 * 1.75 * factor)
+
+        form.palmkm.value = findkm(wmnheightinch / 9.2 * 0.525 * factor)
+        form.palmm.value = findm(wmnheightinch / 9.2 * 0.525 * factor)
+        form.palmcm.value = findcm(wmnheightinch / 9.2 * 0.525 * factor)
+        form.fingerkm.value = findkm(wmnheightinch / 9.2 * 0.475 * factor)
+        form.fingerm.value = findm(wmnheightinch / 9.2 * 0.475 * factor)
+        form.fingercm.value = findcm(wmnheightinch / 9.2 * 0.475 * factor)
+        form.ringkm.value = findkm(factor68 * 0.68 * factor)
+        form.ringm.value = findm(factor68 * 0.68 * factor)
+        form.ringcm.value = findcm(factor68 * 0.68 * factor)
+        form.armlengthkm.value = findkm(factor68 * 22 * factor)
+        form.armlengthm.value = findm(factor68 * 22 * factor)
+        form.armlengthcm.value = findcm(factor68 * 22 * factor)
+
+        form.crotchkm2.value = findkm(headh * 3.5 * factor)
+        form.crotchm2.value = findm(headh * 3.5 * factor)
+        form.crotchcm2.value = findcm(headh * 3.5 * factor)
+        form.footwidthkm.value = findkm(shoe * (0.334 + shoecomp) * factor)
+        form.footwidthm.value = findm(shoe * (0.334 + shoecomp) * factor)
+        form.footwidthcm.value = find2dcm(shoe * (0.334 + shoecomp) * factor)
+        form.footlengthkm.value = findkm(shoe * factor)
+        form.footlengthm.value = findm(shoe * factor)
+        form.footlengthcm.value = find2dcm(shoe * factor)
+
+        console.log(form)
+    }
+
+    // 英制
+
+    /** * 英吋 → 英里 * 1 mile = 63360 inches */
+    function findmi(inches) {
+        return Math.floor(inches / 63360);
+    }
+
+    /** * 英吋 → 剩餘英尺 * 1 foot = 12 inches * 1 mile = 5280 feet */
+    function findft(inches) {
+        return Math.floor((inches / 12) % 5280);
+    }
+
+    /** * 英吋 → 剩餘整數英吋 */
+    function findin(inches) {
+        return Math.floor(inches % 12);
+    }
+
+    /** * 英吋 → 保留 1 位小數 */
+    function find1din(inches) {
+        return Math.floor((inches % 12) * 10) / 10;
+    }
+
+    /** * 英吋 → 保留 2 位小數 */
+    function find2din(inches) {
+        return Math.floor((inches % 12) * 100) / 100;
+    }
+
+    /** * 磅 → 美噸 (Short Ton) * 1 ton = 2000 lb */
+    function findtons(weight) {
+        return Math.floor(weight / 2000);
+    }
+
+    /** * 磅 → 剩餘整數磅 */
+    function findpounds(weight) {
+        return Math.floor(weight % 2000);
+    }
+
+    /** * 磅 → 剩餘磅 (保留兩位小數) */
+    function find2dlbs(weight) {
+        return Math.floor((weight % 2000) * 100) / 100;
+    }
+
+    /** * MPH 保留兩位小數 * (目前原始程式未實作) */
+    function find2dmph(speed) {
+        return Math.floor(speed * 100) / 100;
+    }
+
+    // 英制轉公制
+
+
+    function findkm(inches) {
+        const meters = inches * 0.0254;
+        return Math.floor(meters / 1000);
+    }
+
+    function findm(inches) {
+        const meters = inches * 0.0254;
+        return Math.floor(meters % 1000);
+    }
+
+    function findcm(inches) {
+        const meters = inches * 0.0254;
+        const cm = (meters % 1) * 100;
+        return Math.floor(cm);
+    }
+
+    function find1dcm(inches) {
+        const meters = inches * 0.0254;
+        const cm = (meters % 1) * 100;
+        return Math.floor(cm * 10) / 10;
+    }
+
+    function find2dcm(inches) {
+        const meters = inches * 0.0254;
+        const cm = (meters % 1) * 100;
+        return Math.floor(cm * 100) / 100;
+    }
+
+    /** * 磅 → 公噸 * 1 lb = 0.45359237 kg */
+    function findmtons(weight) {
+        return Math.floor(weight * 0.45359237 / 1000);
+    }
+
+    /** * 磅 → 剩餘公斤 */
+    function findkgs(weight) {
+        return Math.floor((weight * 0.45359237) % 1000);
+    }
+
+    /** * 磅 → 剩餘公斤 (2 位小數) */
+    function find2dkgs(weight) {
+        return Math.floor(((weight * 0.45359237) % 1000) * 100) / 100;
+    }
+
+    // 公制轉英制
+
+    /** * 公分 → 英尺 (剩餘呎) * 1 inch = 2.54 cm * 1 foot = 12 inches */
+    function cm2ft(cm) {
+        var inches = cm / 2.54;
+        return Math.floor(inches / 12);
+    }
+
+    /** * 公分 → 剩餘英吋 */
+    function cm2in(cm) {
+        var inches = cm / 2.54;
+        return inches % 12;
+    }
+
+    /** * 公斤 → 磅 */
+    function kg2lbs(kg) {
+        return Math.floor(kg * 2.20462262);
+    }
+
+    // function test(km, m, cm)
+    // {
+    //     const mi = kmm2mi(km,m,cm)
+    //     const ft = kmm2ft(km,m,cm)
+    //     const inc = kmm2in(km,m,cm)
+    //
+    //
+    //     console.log(kmm2mi(km,m,cm))
+    //     console.log(kmm2ft(km,m,cm))
+    //     console.log(kmm2in(km,m,cm))
+    //
+    //     heightinch = (mi * 63360 + ft * 12 + inc)
+    //     console.log(findm(heightinch))
+    //
+    // }
+    //
+    // function kmm2mi(km, m, cm) {
+    //     console.log("kmm2mi(km, m, cm) "+km+" "+m+" "+cm)
+    //     const meters = (km * 1000) + (m) + (cm / 100);
+    //     console.log("meters"+ meters)
+    //     const inches = meters / 0.0254;
+    //     console.log("inches"+ inches)
+    //     console.log("mile"+Math.floor(inches / 63360))
+    //     return Math.floor(inches / 63360);
+    // }
+    //
+    // function kmm2ft(km, m, cm) {
+    //     const meters = km * 1000 + m + cm / 100;
+    //     const inches = meters / 0.0254;
+    //     const feet = inches / 12;
+    //     return Math.floor(feet % 5280);
+    // }
+    //
+    // function kmm2in(km, m, cm) {
+    //     const meters = km * 1000 + m + cm / 100;
+    //     const inches = meters / 0.0254;
+    //     return Math.floor(inches % 12);
+    // }
+
+    function kmm2mi(km, m, cm) {
+        const totalMeters =
+            (Number(km) * 1000) +
+            (Number(m)) +
+            (Number(cm) / 100);
+
+        const inches = totalMeters / 0.0254;
+        return Math.floor(inches / 63360);
+    }
+
+    function kmm2ft(km, m, cm) {
+        const totalMeters =
+            (Number(km) * 1000) +
+            (Number(m)) +
+            (Number(cm) / 100);
+
+        const inches = totalMeters / 0.0254;
+        const feet = inches / 12;
+
+        return Math.floor(feet % 5280);
+    }
+
+    function kmm2in(km, m, cm) {
+        const totalMeters =
+            (Number(km) * 1000) +
+            (Number(m)) +
+            (Number(cm) / 100);
+
+        const inches = totalMeters / 0.0254;
+
+        return Math.floor(inches % 12);
+    }
+
+    <!-- ADD COMMAS -->
+
+    function addCommas(nStr) {
+        nStr += '';
+        x = nStr.split('.');
+        x1 = x[0];
+        x2 = x.length > 1 ? '.' + x[1] : '';
+        var rgx = /(\d+)(\d{4})/;
+        while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1' + ',' + '$2');
+        }
+        return x1 + x2;
+    }
+
+</script>
+<div align="center"><font size="+2"><b>Giantess Converter v3.05</b></font>
+    <p style="font-size:75%">v2.1 by Byl (Dec.01.2000)<br>v3.0+ by AbsentStar (Oct.08.2007 - Present)</p></div>
+
+<HR>
+
+<form name="gtsconverter">
+
+    <table border="2" width="100%">
+        <tbody>
+        <tr>
+            <td width="50%">
+                <div align="center"><font size="+2"><b>- 英制 -</b></font></div>
+            </td>
+
+            <td width="50%">
+                <div align="center"><font size="+2"><b>- 公制 -</b></font></div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+        </tr>
+
+        <tr>
+            <td><b>當她是正常人類</b><br>
+
+
+                身高：
+                <input name="wmnfeet" size="1" value="5" type="text"> 英呎
+                <input name="wmninches" size="1" value="6" type="text"> 英吋<br>
+
+                體重：
+                <input name="wmnweight" size="1" value="100" type="text"> 鎊<br>
+
+                罩杯：
+                <select name="cup">
+                    <option value="0.8">A&nbsp; &nbsp; &nbsp;</option>
+                    <option value="1.6">B</option>
+                    <option value="2.35" selected="selected">C</option>
+                    <option value="3.05">D</option>
+                    <option value="3.75">E</option>
+                    <option value="4.4">F</option>
+                    <option value="5.05">G</option>
+                    <option value="5.65">H</option>
+                    <option value="6.25">I</option>
+                    <option value="6.8">J</option>
+                </select> cup<br>
+
+                美國鞋碼：
+                <select name="shoe">
+                    <option value="8">3</option>
+                    <option value="8.19">3.5</option>
+                    <option value="8.31">4</option>
+                    <option value="8.5">4.5</option>
+                    <option value="8.69">5</option>
+                    <option value="8.81">5.5</option>
+                    <option value="9">6</option>
+                    <option value="9.19">6.5</option>
+                    <option value="9.31">7</option>
+                    <option value="9.5">7.5</option>
+                    <option value="9.69" selected="selected">8</option>
+                    <option value="9.81">8.5</option>
+                    <option value="10">9</option>
+                    <option value="10.19">9.5</option>
+                    <option value="10.31">10</option>
+                    <option value="10.5">10.5</option>
+                    <option value="10.69">11</option>
+                    <option value="10.81">11.5</option>
+                    <option value="11">12</option>
+                    <option value="11.19">12.5</option>
+                    <option value="11.31">13</option>
+                    <option value="11.5">13.5</option>
+                    <option value="11.69">14</option>
+                    <option value="11.81">14.5</option>
+                    <option value="12">15</option>
+                </select>
+                <br>
+
+                三圍：
+                胸圍<input name="key1" size="1" value="36" type="text">
+                腰圍<input name="key2" size="1" value="24" type="text">
+                臀圍<input name="key3" size="1" value="36" type="text"><br>
+
+                可以舉起
+                <input name="gtslift" size="1" value="50" type="text"> 鎊<br>
+
+                <hr>
+
+                <b>當她變成了女巨人</b>
+                <br>
+                她的高度是：
+                <input name="gtsmiles" size="6" value="0" type="text"> 英哩
+                <input name="gtsfeet" size="3" value="50" type="text"> 英呎
+                <input name="gtsinches" size="1" value="0" type="text"> 英吋<br>
+
+
+                <br>
+                <div align="center"><input name="convertbutton1" value="- 換算 -" onclick="convert(this.form,
+	                this.form.wmnfeet.value,
+	                this.form.wmninches.value,
+	                this.form.cup.options[this.form.cup.selectedIndex].value,
+	                this.form.shoe.options[this.form.shoe.selectedIndex].value,
+	                this.form.key1.value,
+	                this.form.key2.value,
+	                this.form.key3.value,
+	                this.form.wmnweight.value,
+	                this.form.gtsmiles.value,
+	                this.form.gtsfeet.value,
+	                this.form.gtsinches.value,
+	                this.form.gtslift.value
+	            )" type="button"></div>
+
+                <br>
+            </td>
+
+            <td><b>當她是正常人類</b><br>
+
+                身高：<input name="wmn_cm" size="1" value="170" type="text"> 公分<br>
+                體重：<input name="wnm_kg" size="1" value="50" type="text"> 公斤<br>
+
+                罩杯：
+                <select name="cup_">
+                    <option value="0.8">A&nbsp; &nbsp; &nbsp;</option>
+                    <option value="1.6">B</option>
+                    <option value="2.35" selected="selected">C</option>
+                    <option value="3.05">D</option>
+                    <option value="3.75">E</option>
+                    <option value="4.4">F</option>
+                    <option value="5.05">G</option>
+                    <option value="5.65">H</option>
+                    <option value="6.25">I</option>
+                    <option value="6.8">J</option>
+                </select> cup<br>
+
+                美國鞋碼：
+                <select name="shoe_">
+                    <option value="8">3</option>
+                    <option value="8.19">3.5</option>
+                    <option value="8.31">4</option>
+                    <option value="8.5">4.5</option>
+                    <option value="8.69">5</option>
+                    <option value="8.81">5.5</option>
+                    <option value="9">6</option>
+                    <option value="9.19">6.5</option>
+                    <option value="9.31">7</option>
+                    <option value="9.5">7.5</option>
+                    <option value="9.69" selected="selected">8</option>
+                    <option value="9.81">8.5</option>
+                    <option value="10">9</option>
+                    <option value="10.19">9.5</option>
+                    <option value="10.31">10</option>
+                    <option value="10.5">10.5</option>
+                    <option value="10.69">11</option>
+                    <option value="10.81">11.5</option>
+                    <option value="11">12</option>
+                    <option value="11.19">12.5</option>
+                    <option value="11.31">13</option>
+                    <option value="11.5">13.5</option>
+                    <option value="11.69">14</option>
+                    <option value="11.81">14.5</option>
+                    <option value="12">15</option>
+                </select>
+                <br>
+
+                三圍：
+                胸圍<input name="key1_" size="1" value="36" type="text">
+                腰圍<input name="key2_" size="1" value="24" type="text">
+                臀圍<input name="key3_" size="1" value="36" type="text"><br>
+
+                可以舉起
+                <input name="gts_lift" size="1" value="20" type="text"> 公斤<br>
+
+                <hr>
+
+                <b>當她變成了女巨人</b>
+                <br>
+                她的高度是：
+                <input name="gts_km" size="3" value="0" type="text"> 公里
+                <input name="gts_m" size="3" value="1" type="text"> 公尺
+                <input name="gts_cm" size="3" value="70" type="text"> 公分
+                <br>
+
+                <br>
+                <div align="center"><input name="convertbutton2" value="- 換算 -" onclick="convert(this.form,
+	                cm2ft(this.form.wmn_cm.value),
+	                cm2in(this.form.wmn_cm.value),
+	                this.form.cup_.options[this.form.cup.selectedIndex].value,
+	                this.form.shoe_.options[this.form.shoe.selectedIndex].value,
+	                this.form.key1_.value,
+	                this.form.key2_.value,
+	                this.form.key3_.value,
+	                kg2lbs(this.form.wnm_kg.value),
+	                kmm2mi(this.form.gts_km.value,this.form.gts_m.value,this.form.gts_cm.value),
+	                kmm2ft(this.form.gts_km.value,this.form.gts_m.value,this.form.gts_cm.value),
+	                kmm2in(this.form.gts_km.value,this.form.gts_m.value,this.form.gts_cm.value),
+	                kg2lbs(this.form.gts_lift.value)),
+
+test(this.form.gts_km.value,this.form.gts_m.value,this.form.gts_cm.value)
+" type="button">
+                </div>
+                <br>
+            </td>
+        </tr>
+
+
+        </tbody>
+    </table>
+    <br>
+
+
+    <table border="2" width="100%">
+        <tbody>
+        <tr>
+            <td width="50%">
+                <div align="center"><font size="+2"><b>- 英制 -</b></font></div>
+            </td>
+
+            <td width="50%">
+                <div align="center"><font size="+2"><b>- 公制 -</b></font></div>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+
+                <div align="center"><b><font size="+1">整體大小</font></b></div>
+                <br>
+                她身高
+                <input readonly name="gtsmi" size="6" type="text"> mi,
+                <input readonly name="gtsft" size="3" type="text"> ft,
+                <input readonly name="gtsin" size="1" type="text"> in tall<br>
+                她肩寬
+                <input readonly name="shoulderwmi" size="6" type="text"> mi,
+                <input readonly name="shoulderwft" size="3" type="text"> ft,
+                <input readonly name="shoulderwin" size="1" type="text"> in wide<br>
+                她髖寬
+                <input readonly name="hipwmi" size="6" type="text"> mi,
+                <input readonly name="hipwft" size="3" type="text"> ft,
+                <input readonly name="hipwin" size="1" type="text"> in wide<br>
+
+                她體重
+                <input readonly name="gtstons" size="24" type="text"> tons,
+                <input readonly name="gtspounds" size="3" type="text"> pounds<br>
+                她可以舉起
+                <input readonly name="gtslifttons" size="24" type="text"> tons,
+                <input readonly name="gtsliftpounds" size="3" type="text"> pounds<br><br>
+
+
+                對她而言，6英吋，180磅的男性<br>
+                看起來的高度是：
+                <input readonly name="manfeet" size="3" type="text"> 英呎
+                <input readonly name="maninches" size="3" type="text"> 英吋<br>
+                感受到的重量是：
+                <input readonly name="manpounds" size="3" type="text"> 磅,
+                <input readonly name="manounces" size="3" type="text"> 盎司
+                <br><br>
+
+                <div align="center"><b><font size="+1">三圍</font></b></div>
+                <br>
+                胸圍：<input readonly name="bustmi" size="6" type="text"> 英哩
+                <input readonly name="bustft" size="3" type="text"> 英呎
+                <input readonly name="bustin" size="1" type="text"> inches<br>
+
+                腰圍：<input readonly name="waistmi" size="6" type="text"> 英哩
+                <input readonly name="waistft" size="3" type="text"> 英呎
+                <input readonly name="waistin" size="1" type="text"> inches<br>
+
+                臀圍：<input readonly name="hipsmi" size="6" type="text"> 英哩
+                <input readonly name="hipsft" size="3" type="text"> 英呎
+                <input readonly name="hipsin" size="1" type="text"> inches<br><br>
+
+                <hr>
+
+                <div align="center"><b><font size="+1">關鍵點高度</font></b></div>
+                <br>
+                <input readonly name="anklemi" size="6" type="text"> mi,
+                <input readonly name="ankleft" size="3" type="text"> ft,
+                <input readonly name="anklein" size="3" type="text"> in to her <b>ankle</b><br>
+                <input readonly name="kneemi" size="6" type="text"> mi,
+                <input readonly name="kneeft" size="3" type="text"> ft,
+                <input readonly name="kneein" size="3" type="text"> in to her <b>knee</b><br>
+                <input readonly name="crotchmi" size="6" type="text"> mi,
+                <input readonly name="crotchft" size="3" type="text"> ft,
+                <input readonly name="crotchin" size="3" type="text"> in to her <b>crotch</b><br>
+                <input readonly name="hipmi" size="6" type="text"> mi,
+                <input readonly name="hipft" size="3" type="text"> ft,
+                <input readonly name="hipin" size="3" type="text"> in to her <b>hip</b><br>
+                <input readonly name="breastmi" size="6" type="text"> mi,
+                <input readonly name="breastft" size="3" type="text"> ft,
+                <input readonly name="breastin" size="3" type="text"> in to the cusp of her <b>breasts</b><br>
+                <input readonly name="neckmi" size="6" type="text"> mi,
+                <input readonly name="neckft" size="3" type="text"> ft,
+                <input readonly name="neckin" size="3" type="text"> in to the base of her <b>neck</b><br>
+                <input readonly name="chinmi" size="6" type="text"> mi,
+                <input readonly name="chinft" size="3" type="text"> ft,
+                <input readonly name="chinin" size="3" type="text"> in to her <b>chin</b><br><br>
+            </td>
+
+            <td>
+                <div align="center"><b><font size="+1">整體大小</font></b></div>
+                <br>
+                她身高
+                <input readonly name="gtskm" size="6" type="text"> 公里
+                <input readonly name="gtsm" size="3" type="text"> 公尺
+                <input readonly name="gtscm" size="1" type="text"> 公分<br>
+                她肩寬
+                <input readonly name="shoulderwkm" size="6" type="text"> 公里
+                <input readonly name="shoulderwm" size="3" type="text"> 公尺
+                <input readonly name="shoulderwcm" size="1" type="text"> 公分<br>
+                她髖寬
+                <input readonly name="hipwkm" size="6" type="text"> 公里
+                <input readonly name="hipwm" size="3" type="text"> 公尺
+                <input readonly name="hipwcm" size="1" type="text"> 公分<br>
+
+                她體重
+                <input readonly name="gtsmtons" size="24" type="text"> 噸
+                <input readonly name="gtskgs" size="3" type="text">公斤<br>
+                她可以舉起
+                <input readonly name="gtsliftmtons" size="24" type="text"> 噸
+                <input readonly name="gtsliftkgs" size="3" type="text">公斤<br><br>
+
+                對她而言，1.8公尺，81.5公斤的男性<br>
+                看起來的高度是：
+                <input readonly name="manm" size="3" type="text"> 公尺
+                <input readonly name="mancm" size=3" type="text"> 公分<br>
+                感受到的重量是：
+                <input readonly name="mankg" size="3" type="text"> 公斤
+                <input readonly name="mang" size="3" type="text"> 公釐
+                <br><br>
+
+                <div align="center"><b><font size="+1">三圍</font></b></div>
+                <br>
+                胸圍：<input readonly name="bustkm" size="6" type="text">公里
+                <input readonly name="bustm" size="3" type="text">公尺
+                <input readonly name="bustcm" size="1" type="text"> 公分<br>
+
+                腰圍：<input readonly name="waistkm" size="6" type="text">公里
+                <input readonly name="waistm" size="3" type="text">公尺
+                <input readonly name="waistcm" size="1" type="text"> 公分<br>
+
+                臀圍：<input readonly name="hipskm" size="6" type="text">公里
+                <input readonly name="hipsm" size="3" type="text">公尺
+                <input readonly name="hipscm" size="1" type="text"> 公分<br><br>
+
+                <hr>
+
+                <div align="center"><b><font size="+1">關鍵點高度</font></b></div>
+                <br>腳踝高度：
+                <input readonly name="anklekm" size="6" type="text"> 公里
+                <input readonly name="anklem" size="3" type="text"> 公尺
+                <input readonly name="anklecm" size="3" type="text"> 公分
+
+                <br>膝蓋高度：
+                <input readonly name="kneekm" size="6" type="text"> 公里
+                <input readonly name="kneem" size="3" type="text"> 公尺
+                <input readonly name="kneecm" size="3" type="text"> 公分
+
+                <br>胯部高度：
+                <input readonly name="crotchkm" size="6" type="text"> 公里
+                <input readonly name="crotchm" size="3" type="text"> 公尺
+                <input readonly name="crotchcm" size="3" type="text"> 公分
+
+                <br>臀部高度：
+                <input readonly name="hipkm" size="6" type="text"> 公里
+                <input readonly name="hipm" size="3" type="text"> 公尺
+                <input readonly name="hipcm" size="3" type="text"> 公分
+
+                <br>乳頭高度：
+                <input readonly name="breastkm" size="6" type="text"> 公里
+                <input readonly name="breastm" size="3" type="text"> 公尺
+                <input readonly name="breastcm" size="3" type="text"> 公分
+
+                <br>脖子高度：
+                <input readonly name="neckkm" size="6" type="text"> 公里
+                <input readonly name="neckm" size="3" type="text"> 公尺
+                <input readonly name="neckcm" size="3" type="text"> 公分
+
+                <br>下巴高度：
+                <input readonly name="chinkm" size="6" type="text"> 公里
+                <input readonly name="chinm" size="3" type="text"> 公尺
+                <input readonly name="chincm" size="3" type="text"> 公分<br>
+
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+
+                <div align="center"><b><font size="+1">Movement</font></b></div>
+                <br>
+                Her walking stride is
+                <input readonly name="walkstridemi" size="6" type="text"> mi
+                <input readonly name="walkstrideft" size="6" type="text"> ft
+                <input readonly name="walkstridein" size="3" type="text"> in long<br>
+                Her running stride is
+                <input readonly name="runstridemi" size="6" type="text"> mi
+                <input readonly name="runstrideft" size="6" type="text"> ft
+                <input readonly name="runstridein" size="3" type="text"> in long<br>
+                She walks at
+                <input readonly name="walkspeedmph" size="6" type="text"> mph<br>
+                She runs at&nbsp;
+                <input readonly name="runspeedmph" size="6" type="text"> mph<br><br><br>
+                Her steps produce&nbsp;
+                <input readonly name="gtsstep" size="24" type="text"> joules<br>
+                Her stomp produces
+                <input readonly name="gtsstomp" size="24" type="text"> joules<br>
+                Her hop produces&nbsp;&nbsp;
+                <input readonly name="gtsjump" size="24" type="text"> joules<br><br><br>
+
+            </td>
+            <td>
+
+                <div align="center"><b><font size="+1">Movement</font></b></div>
+                <br>
+                Her walking stride is
+                <input readonly name="walkstridekm" size="6" type="text"> km
+                <input readonly name="walkstridem" size="6" type="text"> m
+                <input readonly name="walkstridecm" size="3" type="text"> 公分 long<br>
+                Her running stride is
+                <input readonly name="runstridekm" size="6" type="text"> km
+                <input readonly name="runstridem" size="6" type="text"> m
+                <input readonly name="runstridecm" size="3" type="text"> 公分 long<br>
+                She walks at
+                <input readonly name="walkspeedkph" size="6" type="text"> kph<br>
+                She runs at&nbsp;
+                <input readonly name="runspeedkph" size="6" type="text"> kph<br><br>
+                <b><u>Energy released by Earthquakes</u>:</b><br>
+                Magnitude 4 - 2.2e10 joules<br>
+                Magnitude 5 - 7.1e11 joules<br>
+                Magnitude 6 - 2.2e13 joules<br>
+                Magnitude 7 - 7.1e14 joules<br>
+                Magnitude 8 - 2.2e16 joules<br>
+                Magnitude 9 - 7.1e17 joules<br>
+
+
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+    <br>
+
+    <table border="2" width="100%">
+        <tbody>
+
+        <tr>
+            <td width="50%">
+                <div align="center"><b><font size="+1">Head</font></b></div>
+                <br>
+
+                Her <b>hairs</b> are&nbsp;&nbsp;
+                <input readonly name="hairmi" size="6" type="text"> mi,
+                <input readonly name="hairft" size="3" type="text"> ft,
+                <input readonly name="hairin" size="3" type="text"> in. in diameter<br><br>
+                Her <b>mouth</b> opens
+                <input readonly name="mouthopenmi" size="6" type="text"> mi,
+                <input readonly name="mouthopenft" size="3" type="text"> ft,
+                <input readonly name="mouthopenin" size="3" type="text"> in tall<br>
+                Her <b>smile</b> is &nbsp;&nbsp;
+                <input readonly name="lipsmi" size="6" type="text"> mi,
+                <input readonly name="lipsft" size="3" type="text"> ft,
+                <input readonly name="lipsin" size="3" type="text"> in wide<br><br>
+                Her <b>tongue</b> is &nbsp;
+                <input readonly name="tonguemi" size="6" type="text"> mi,
+                <input readonly name="tongueft" size="3" type="text"> ft,
+                <input readonly name="tonguein" size="3" type="text"> in long and<br>
+                Can <b>stick out</b> &nbsp; <input readonly name="tonguestickmi" size="6" type="text"> mi,
+                <input readonly name="tonguestickft" size="3" type="text"> ft,
+                <input readonly name="tonguestickin" size="3" type="text"> in<br><br>
+
+                <hr>
+                <div align="center"><b><font size="+1">Breasts</font></b></div>
+                <br>
+
+                Her <b>breasts</b> are each:<br>
+                <input readonly name="breastheightmi" size="6" type="text"> 英哩
+                <input readonly name="breastheightft" size="3" type="text"> 英呎
+                <input readonly name="breastheightin" size="3" type="text"> 英吋,high,<br>
+                <input readonly name="breastwidthmi" size="6" type="text"> 英哩
+                <input readonly name="breastwidthft" size="3" type="text"> 英呎
+                <input readonly name="breastwidthin" size="3" type="text"> 英吋,wide, and are<br>
+                <input readonly name="breastdepthmi" size="6" type="text"> 英哩
+                <input readonly name="breastdepthft" size="3" type="text"> 英呎
+                <input readonly name="breastdepthin" size="3" type="text"> 英吋,out from the chest<br>
+                And weigh <input readonly name="breasttons" size="24" type="text"> tons,
+                <input readonly name="breastpounds" size="5" type="text"> pounds<br><br>
+                她的乳暈直徑：
+                <input readonly name="areoladiametermi" size="6" type="text"> 英哩
+                <input readonly name="areoladiameterft" size="3" type="text"> 英呎
+                <input readonly name="areoladiameterin" size="3" type="text"> 英吋<br>
+                她的乳頭直徑：
+                <input readonly name="nipplediametermi" size="6" type="text"> 英哩
+                <input readonly name="nipplediameterft" size="3" type="text"> 英呎
+                <input readonly name="nipplediameterin" size="3" type="text"> 英吋<br>
+                勃起時乳頭長：
+                <input readonly name="nippleerrectmi" size="6" type="text"> 英哩
+                <input readonly name="nippleerrectft" size="3" type="text"> 英呎
+                <input readonly name="nippleerrectin" size="3" type="text"> 英吋<br>
+
+                <br>
+                <div align="center"><b><font size="+1">Milk</font></b></div>
+                <br>
+
+                Her <b>stream</b> is
+                <input readonly name="milkductmi" size="6" type="text"> mi,
+                <input readonly name="milkductft" size="3" type="text"> ft,
+                <input readonly name="milkductin" size="3" type="text"> in. in diameter<br>
+                A <b>drop</b> is
+                <input readonly name="milkdropga" size="24" type="text"> gallons,<br>
+                Which is &nbsp;<input readonly name="milkdroptons" size="24" type="text"> tons,
+                <input readonly name="milkdroppounds" size="3" type="text"> pounds<br><br>
+
+                <hr>
+                <div align="center"><b><font size="+1">下體</font></b></div>
+                <br>
+
+                她的陰道深度：
+                <input readonly name="vaginami" size="6" type="text"> 英哩
+                <input readonly name="vaginaft" size="3" type="text"> 英呎
+                <input readonly name="vaginain" size="1" type="text"> 英吋<br>
+                她的陰唇長度：
+                <input readonly name="labiami" size="6" type="text"> 英哩
+                <input readonly name="labiaft" size="3" type="text"> 英呎
+                <input readonly name="labiain" size="1" type="text"> 英吋<br><br>
+
+                <hr>
+                <div align="center"><b><font size="+1">Arms and Legs</font></b></div>
+                <br>
+
+                她的手臂長度：
+                <input readonly name="armlmi" size="6" type="text"> 英哩
+                <input readonly name="armlft" size="3" type="text"> 英呎
+                <input readonly name="armlin" size="1" type="text"> 英吋<br>
+                她的手掌寬度：
+                <input readonly name="palmmi" size="6" type="text"> 英哩
+                <input readonly name="palmft" size="3" type="text"> 英呎
+                <input readonly name="palmin" size="1" type="text"> 英吋<br>
+                她的中指長度：
+                <input readonly name="fingermi" size="6" type="text"> 英哩
+                <input readonly name="fingerft" size="3" type="text"> 英呎
+                <input readonly name="fingerin" size="1" type="text"> 英吋<br>
+                她的中指高度：
+                <input readonly name="ringmi" size="6" type="text"> 英哩
+                <input readonly name="ringft" size="3" type="text"> 英呎
+                <input readonly name="ringin" size="1" type="text"> 英吋<br><br>
+
+                她的腿長（從胯部到腳跟底部）是：<br>
+                <input readonly name="crotchmi2" size="6" type="text"> 英哩
+                <input readonly name="crotchft2" size="3" type="text"> 英呎
+                <input readonly name="crotchin2" size="1" type="text"> 英吋,long<br>
+                她的腳的<br>
+                寬度：
+                <input readonly name="footwmi" size="6" type="text"> 英哩
+                <input readonly name="footwft" size="3" type="text"> 英呎
+                <input readonly name="footwin" size="3" type="text"> 英吋<br>
+                長度：
+                <input readonly name="footlmi" size="6" type="text"> 英哩
+                <input readonly name="footlft" size="3" type="text"> 英呎
+                <input readonly name="footlin" size="3" type="text"> 英吋<br><br>
+            </td>
+
+            <td width="50%">
+
+                <div align="center"><b><font size="+1">Head</font></b></div>
+                <br>
+
+                Her <b>hairs</b> are&nbsp;&nbsp;
+                <input readonly name="hairkm" size="6" type="text"> 公里
+                <input readonly name="hairm" size="3" type="text"> 公尺
+                <input readonly name="haircm" size="3" type="text"> 公分 in diameter<br><br>
+                Her <b>mouth</b> opens
+                <input readonly name="mouthopenkm" size="6" type="text"> 公里
+                <input readonly name="mouthopenm" size="3" type="text"> 公尺
+                <input readonly name="mouthopencm" size="3" type="text"> 公分 tall<br>
+                Her <b>smile</b> is &nbsp;&nbsp;
+                <input readonly name="lipskm" size="6" type="text"> 公里
+                <input readonly name="lipsm" size="3" type="text"> 公尺
+                <input readonly name="lipscm" size="3" type="text"> 公分 wide<br><br>
+                Her <b>tongue</b> is &nbsp;
+                <input readonly name="tonguekm" size="6" type="text"> 公里
+                <input readonly name="tonguem" size="3" type="text"> 公尺
+                <input readonly name="tonguecm" size="3" type="text"> 公分 long and<br>
+                Can <b>stick out</b> &nbsp; <input readonly name="tongueoutkm" size="6" type="text"> 公里
+                <input readonly name="tongueoutm" size="3" type="text"> 公尺
+                <input readonly name="tongueoutcm" size="3" type="text"> cm<br><br>
+
+                <hr>
+                <div align="center"><b><font size="+1">胸部</font></b></div>
+                <br>
+
+                Her <b>breasts</b> are each:<br>
+                <input readonly name="breastheightkm" size="6" type="text"> 公里
+                <input readonly name="breastheightm" size="3" type="text"> 公尺
+                <input readonly name="breastheightcm" size="3" type="text"> 公分 high,<br>
+                <input readonly name="breastwidthkm" size="6" type="text"> 公里
+                <input readonly name="breastwidthm" size="3" type="text"> 公尺
+                <input readonly name="breastwidthcm" size="3" type="text"> 公分 wide, and are<br>
+                <input readonly name="breastdepthkm" size="6" type="text"> 公里
+                <input readonly name="breastdepthm" size="3" type="text"> 公尺
+                <input readonly name="breastdepthcm" size="3" type="text"> 公分 out from the chest<br>
+                And weigh <input readonly name="breastmtons" size="24" type="text"> 噸
+                <input readonly name="breastkgs" size="5" type="text"> kilograms<br><br>
+
+                她的乳暈直徑：
+                <input readonly name="areoladiameterkm" size="6" type="text"> 公里
+                <input readonly name="areoladiameterm" size="3" type="text"> 公尺
+                <input readonly name="areoladiametercm" size="3" type="text"> 公分<br>
+                她的乳頭直徑：
+                <input readonly name="nipplediameterkm" size="6" type="text"> 公里
+                <input readonly name="nipplediameterm" size="3" type="text"> 公尺
+                <input readonly name="nipplediametercm" size="3" type="text"> 公分<br>
+                勃起時乳頭長：
+                <input readonly name="nippleerrectkm" size="6" type="text"> 公里
+                <input readonly name="nippleerrectm" size="3" type="text"> 公尺
+                <input readonly name="nippleerrectcm" size="3" type="text"> 公分<br>
+
+                <br>
+                <div align="center"><b><font size="+1">Milk</font></b></div>
+                <br>
+
+                Her <b>stream</b> is
+                <input readonly name="milkductkm" size="6" type="text"> 公里
+                <input readonly name="milkductm" size="3" type="text"> 公尺
+                <input readonly name="milkductcm" size="3" type="text"> 公分 in diameter<br>
+                A <b>drop</b> is
+                <input readonly name="milkdropli" size="24" type="text"> litres,<br>
+                Which is &nbsp;<input readonly name="milkdropmtons" size="24" type="text"> 噸
+                <input readonly name="milkdropkgs" size="3" type="text"> kilograms<br><br>
+
+                <hr>
+                <div align="center"><b><font size="+1">下體</font></b></div>
+                <br>
+
+                她的陰道深度：
+                <input readonly name="vaginakm" size="6" type="text"> 公里
+                <input readonly name="vaginam" size="3" type="text"> 公尺
+                <input readonly name="vaginacm" size="1" type="text"> 公分<br>
+                她的陰唇長度：
+                <input readonly name="labiakm" size="6" type="text"> 公里
+                <input readonly name="labiam" size="3" type="text"> 公尺
+                <input readonly name="labiacm" size="1" type="text"> 公分<br><br>
+
+                <hr>
+                <div align="center"><b><font size="+1">Arms and Legs</font></b></div>
+                <br>
+
+                她的手臂長度：
+                <input readonly name="armlengthkm" size="6" type="text"> 公里
+                <input readonly name="armlengthm" size="3" type="text"> 公尺
+                <input readonly name="armlengthcm" size="1" type="text"> 公分<br>
+                她的手掌寬度：
+                <input readonly name="palmkm" size="6" type="text"> 公里
+                <input readonly name="palmm" size="3" type="text"> 公尺
+                <input readonly name="palmcm" size="1" type="text"> 公分<br>
+                她的中指長度：
+                <input readonly name="fingerkm" size="6" type="text"> 公里
+                <input readonly name="fingerm" size="3" type="text"> 公尺
+                <input readonly name="fingercm" size="1" type="text"> 公分<br>
+                她的中指高度：
+                <input readonly name="ringkm" size="6" type="text"> 公里
+                <input readonly name="ringm" size="3" type="text"> 公尺
+                <input readonly name="ringcm" size="1" type="text"> 公分<br><br>
+
+                她的腿長（從胯部到腳跟底部）是：<br>
+                <input readonly name="crotchkm2" size="6" type="text"> 公里
+                <input readonly name="crotchm2" size="3" type="text"> 公尺
+                <input readonly name="crotchcm2" size="1" type="text"> 公分 long<br>
+                她的腳的<br>
+                寬度：
+                <input readonly name="footwidthkm" size="6" type="text"> 公里
+                <input readonly name="footwidthm" size="3" type="text"> 公尺
+                <input readonly name="footwidthcm" size="3" type="text"> 公分<br>
+                長度：
+                <input readonly name="footlengthkm" size="6" type="text"> 公里
+                <input readonly name="footlengthm" size="3" type="text"> 公尺
+                <input readonly name="footlengthcm" size="3" type="text"> 公分<br><br>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</form>
+<br>
+
+<div align="center"><b><u><font size="+1">參考資料</font></u></b></div>
+<br>
+
+<table border="1" width="100%">
+    <tbody>
+
+    <tr>
+        <td width="33%">
+            <div align="center"><b>- Living -</b></div>
+            <br>
+            Tallest Human - 9 ft tall<br>
+            Elephant &nbsp;&nbsp;&nbsp; &nbsp;- 13 ft tall<br>
+            Giraffe &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;- 17 ft tall<br>
+            Blue Whale &nbsp; &nbsp;- 90 ft long<br>
+            Maple Tree &nbsp; &nbsp;- 30 to 130 ft tall<br>
+            Pine Tree &nbsp; &nbsp;&nbsp;- 50 to 150 ft tall<br>
+            Sequoia Tree &nbsp;- 300 ft tall<br>
+            Redwood Tree &nbsp;- 350 ft tall<br><br><br>
+        </td>
+        <td width="34%">
+            <div align="center"><b>- Constructs -</b></div>
+            <br>
+            Statue of Liberty &nbsp; &nbsp; - 151 ft tall<br>
+            Clock Tower (Big Ben) - 316 ft tall<br>
+            Washington Monument &nbsp; - 555 ft tall<br>
+            Seattle Space Needle &nbsp;- 605 ft tall<br>
+            Eiffel Tower &nbsp;- 1,063 ft tall<br>
+            Tokyo Tower &nbsp; - 1,091 ft tall<br>
+            Sears Tower &nbsp; - 1,450 ft tall<br>
+            CN Tower &nbsp; &nbsp; &nbsp;- 1,815 ft tall<br><br>
+
+            New York City covers 470 square miles<br>
+        </td>
+        <td width="33%">
+            <div align="center"><b>- Common Interaction -</b></div>
+            <br>
+            City Bus &nbsp; &nbsp;- 50 ft long, 9 tons*<br>
+            Train Car &nbsp; - 80 ft long, 25 tons*<br>
+            Boeing 747 &nbsp;- 231 ft long, 191 tons*<br>
+            Cruise Ship - 935 ft long, 83,000 tons*<br>
+            Oil Tanker &nbsp;- 1350 ft long, 500,000 tons<br><br>
+            Road Width - 11 ft / lane, 12 ft highway<br>
+            Sidewalk&nbsp;&nbsp; - 4 to 6 ft on each side<br><br>
+            *<i>Empty</i>
+        </td>
+    </tr>
+
+    </tbody>
+</table>
+
+<table border="1" width="100%">
+    <tbody>
+    <tr>
+        <td width="50%">
+            <div align="center"><b>- Geological -</b></div>
+            <br>
+            Cloud layers Begin &nbsp;&nbsp;- Altitude 1km (3,280 ft)<br>
+            Cloud layers End &nbsp;&nbsp;&nbsp;&nbsp;- Altitude 12km (40,000 ft)<br>
+            Average Ocean Depth &nbsp;- 4km (13,120 ft)<br>
+            Mount Everest &nbsp; &nbsp; &nbsp; &nbsp;- 8.8km (29,000 ft)<br>
+            Troposphere (Oxygen) - Ends ~10 miles from Earth's Surface<br>
+            Japan &nbsp; &nbsp; - 1900 km (1180.6 mi) long<br>
+            Australia - 4000 km (2485.5 mi) wide, 3700 km (2299 mi) tall<br><br>
+            <i>Australia is comparable to the Continental US and Europe</i><br>
+        </td>
+        <td width="50%">
+            <div align="center"><b>- Celestial -</b></div>
+            <br>
+            Diameter of the Moon &nbsp;- 3475 km (2160 mi)<br>
+            Mass of the Moon &nbsp; &nbsp; &nbsp;- 7.35e22 kg (8.1e19 tons)<br>
+            Diameter of the Earth - 12750 km (7922.5 mi)<br>
+            Mass of the Earth &nbsp; &nbsp; - 5.97e24 kg (6.58e21 tons)<br>
+            Diameter of the Sun &nbsp; - 1.39e6 km (8.64e5 mi)<br>
+            Mass of the Sun &nbsp; &nbsp; &nbsp; - 1.989e30 kg (2.19e27 tons)<br>
+            Diameter of Solar System &nbsp;- 1.2e10 km (7.456e9 mi)<br>
+            Diameter of The Milky Way - 9.46e17 km (5.878e17 mi)<br><br>
+
+        </td>
+    </tr>
+
+    </tbody>
+</table>
+<br>
+
+</body>
+</html>
